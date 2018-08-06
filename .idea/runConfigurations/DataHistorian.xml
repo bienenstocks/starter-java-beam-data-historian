@@ -1,0 +1,25 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DataHistorian" type="Application" factoryName="Application" nameIsGenerated="true">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+      <pattern>
+        <option name="PATTERN" value="com.ibm.streams.beam.sample.datahistorian.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="MAIN_CLASS_NAME" value="com.ibm.streams.beam.sample.datahistorian.DataHistorian" />
+    <option name="VM_PARAMETERS" value="" />
+    <option name="PROGRAM_PARAMETERS" value="--awsServiceEndpoint='s3-api.us-geo.objectstorage.softlayer.net' --awsCredentialsProvider=&quot;{\&quot;@type\&quot;:\&quot;AWSStaticCredentialsProvider\&quot;,\&quot;awsAccessKeyId\&quot;:\&quot;$AWS_ACCESS_KEY_ID\&quot;,\&quot;awsSecretKey\&quot;:\&quot;$AWS_SECRET_ACCESS_KEY\&quot;}&quot;" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="ENABLE_SWING_INSPECTOR" value="false" />
+    <option name="ENV_VARIABLES" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <module name="datahistorian-starter-kit" />
+    <envs>
+      <env name="AWS_ACCESS_KEY_ID" value="b6221a4e7c994e36b2b06afe1da75918" />
+      <env name="AWS_SECRET_ACCESS_KEY" value="036fde137bc6ea381cac9eba02065f6daefbfb64ddc133a1" />
+    </envs>
+    <method />
+  </configuration>
+</component>
