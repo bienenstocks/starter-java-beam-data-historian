@@ -1,4 +1,5 @@
-creds.json
+config.json
+*.iml
 .idea/
 !.idea/runConfigurations/
 target/
