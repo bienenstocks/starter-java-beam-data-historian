@@ -7,6 +7,8 @@
   "aws": {
     "awsServiceEndpoint": "<service endpoint>",
     "awsAccessKeyId": "<access_key_id>",
-    "awsSecretKey": "<secret_access_key>"
+    "awsSecretKey": "<secret_access_key>",
+    "bucket": "<bucket>",
+    "filePrefix": "default"
   }
 }

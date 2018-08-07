@@ -48,7 +48,7 @@ public interface DataHistorianOptions extends PipelineOptions, ApplicationNameOp
      *                     credentials.
      */
     void setCred(String credFilePath);
-    @Default.String("creds.json")
+    @Default.String("config.json")
     String getCred();
 
     void setAwsServiceEndpoint(String ep);

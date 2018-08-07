@@ -49,8 +49,10 @@ public class DataHistorian {
         // Run the consumer
         options.setAppName("MessageHubRead");
 
-        // Set up the Object Storage
+        // Set up the Object Storage options
         AWSConfig.setObjectStorageConfigParams(options);
+        String bucket = AWSConfig.getBucket(options);
+        String filePrefix = AWSConfig.getFilePrefix(options);
 
         Pipeline rp = Pipeline.create(options);
 
@@ -73,9 +75,9 @@ public class DataHistorian {
         // Print messages to System.out
         pc.apply(ParDo.of(new PrintDoFn()));
 
-       //  pc.apply(new WriteOneFilePerWindow("/tmp/out", 1));
+        pc.apply(new WriteOneFilePerWindow("/tmp/out", 1));
 
-        pc.apply(new WriteOneFilePerWindow("s3://starter-kits-sars/out", 1));
+        pc.apply(new WriteOneFilePerWindow("s3://" + bucket + "/" + filePrefix, 1));
 
         // Launch the pipeline and block.
         rp.run().waitUntilFinish();

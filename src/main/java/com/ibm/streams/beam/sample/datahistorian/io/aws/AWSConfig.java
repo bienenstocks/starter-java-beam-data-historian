@@ -45,5 +45,21 @@ public class AWSConfig {
                         (String) awscred.get("awsAccessKeyId"),
                         (String) awscred.get("awsSecretKey")));
     }
+
+    public static String getBucket(DataHistorianOptions options) throws IOException, ParseException{
+        // parse credentials file into a JSONObject
+        JSONParser parser = new JSONParser();
+        JSONObject cred = (JSONObject) parser.parse(new FileReader(options.getCred()));
+        JSONObject awscred = (JSONObject) cred.get("aws");
+        return (String) awscred.get("bucket");
+    }
+
+    public static String getFilePrefix(DataHistorianOptions options) throws IOException, ParseException {
+        // parse credentials file into a JSONObject
+        JSONParser parser = new JSONParser();
+        JSONObject cred = (JSONObject) parser.parse(new FileReader(options.getCred()));
+        JSONObject awscred = (JSONObject) cred.get("aws");
+        return (String) awscred.get("filePrefix");
+    }
 }
 
