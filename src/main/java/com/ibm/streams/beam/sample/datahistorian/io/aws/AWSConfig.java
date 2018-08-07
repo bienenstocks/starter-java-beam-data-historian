@@ -21,65 +21,29 @@
 /* (C) Copyright IBM Corp. 2017, 2018  All Rights reserved.         */
 /*                                                                  */
 /* end_generated_IBM_copyright_prolog                               */
-package com.ibm.streams.beam.sample.datahistorian.io.mh;
+package com.ibm.streams.beam.sample.datahistorian.io.aws;
 
-import org.json.simple.JSONArray;
+import com.ibm.streams.beam.sample.datahistorian.DataHistorianOptions;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 
+public class AWSConfig {
 
-/**
- * This is a utility class that takes the path to a Message Hub credentials
- * file, parses it, and stores configurations as a {@link HashMap} which can
- * be conveniently consumed by {@code KafkaIO}.
- */
-public class MessageHubConfig extends HashMap<String, Object> {
-
-    private static final String JAAS_TEMPLATE =
-            "org.apache.kafka.common.security.plain.PlainLoginModule required"
-                    + " username=\"USERNAME\" password=\"PASSWORD\";";
-    private final String bootstrapServers;
-
-    /**
-     * @param credFilePath path to the Message Hub credentials file
-     */
-    public MessageHubConfig(String credFilePath) throws IOException, ParseException {
-        super(6);
+    public static void setObjectStorageConfigParams(DataHistorianOptions options) throws IOException, ParseException {
 
         // parse credentials file into a JSONObject
         JSONParser parser = new JSONParser();
-        JSONObject cred = (JSONObject) parser.parse(new FileReader(credFilePath));
-        JSONObject mhcred = (JSONObject) cred.get("messagehub");
-
-        // concatenate servers into a comma-separated string
-//        bootstrapServers = String.join(
-//                ",", (JSONArray) cred.get("kafka_brokers_sasl"));
-
-        bootstrapServers = (String) mhcred.get("kafka_brokers_sasl");
-
-        // add properties to the config
-        put("bootstrap.servers", bootstrapServers);
-        put("security.protocol","SASL_SSL");
-        put("ssl.protocol","TLSv1.2");
-        put("ssl.enabled.protocols","TLSv1.2");
-        put("sasl.mechanism","PLAIN");
-
-        String username = (String) mhcred.get("user");
-        String password = (String) mhcred.get("password");
-        String jaas = JAAS_TEMPLATE.replace("USERNAME", username)
-                .replace("PASSWORD", password);
-        put("sasl.jaas.config", jaas);
-    }
-
-    /**
-     * @return comma-separated bootstrap servers
-     */
-    public String getBootstrapServers() {
-        return bootstrapServers;
+        JSONObject cred = (JSONObject) parser.parse(new FileReader(options.getCred()));
+        JSONObject awscred = (JSONObject) cred.get("aws");
+        options.setAwsServiceEndpoint((String) awscred.get("awsServiceEndpoint"));
+        options.setAwsCredentialsProvider(
+                new CustomAWSCredentialsProvider(
+                        (String) awscred.get("awsAccessKeyId"),
+                        (String) awscred.get("awsSecretKey")));
     }
 }
+

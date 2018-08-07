@@ -1,5 +1,0 @@
-{
-  "user": "Uyqx903lKIiHBMBv",
-  "password": "3T5CW00dx7iVIIDU5MyjSdjAkDeUp8mA",
-  "kafka_brokers_sasl": "kafka03-prod01.messagehub.services.us-south.bluemix.net:9093,kafka02-prod01.messagehub.services.us-south.bluemix.net:9093,kafka01-prod01.messagehub.services.us-south.bluemix.net:9093,kafka04-prod01.messagehub.services.us-south.bluemix.net:9093,kafka05-prod01.messagehub.services.us-south.bluemix.net:9093"
-}

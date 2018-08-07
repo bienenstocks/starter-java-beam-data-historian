@@ -1,8 +1,7 @@
 package com.ibm.streams.beam.sample.datahistorian;
 
-import com.ibm.streams.beam.sample.datahistorian.io.mh.Consumer;
 import com.ibm.streams.beam.sample.datahistorian.io.mh.MessageHubConfig;
-import com.ibm.streams.beam.sample.datahistorian.io.mh.MessageHubOptions;
+import com.ibm.streams.beam.sample.datahistorian.io.aws.AWSConfig;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.FileBasedSink;
 import org.apache.beam.sdk.io.TextIO;
@@ -39,16 +38,20 @@ public class DataHistorian {
 
     public static void main(String args[]) throws IOException, ParseException {
         // Create options
-        MessageHubOptions options =
+        DataHistorianOptions options =
                 PipelineOptionsFactory.fromArgs(args)
                         .withValidation()
-                        .as(MessageHubOptions.class);
+                        .as(DataHistorianOptions.class);
 
         // Parse credentials file
         MessageHubConfig config = new MessageHubConfig(options.getCred());
 
         // Run the consumer
         options.setAppName("MessageHubRead");
+
+        // Set up the Object Storage
+        AWSConfig.setObjectStorageConfigParams(options);
+
         Pipeline rp = Pipeline.create(options);
 
         PCollection pc =
@@ -70,9 +73,9 @@ public class DataHistorian {
         // Print messages to System.out
         pc.apply(ParDo.of(new PrintDoFn()));
 
-        pc.apply(new WriteOneFilePerWindow("/tmp/out", 1));
+       //  pc.apply(new WriteOneFilePerWindow("/tmp/out", 1));
 
-        pc.apply(new WriteOneFilePerWindow("s3://starter-kits/out", 1));
+        pc.apply(new WriteOneFilePerWindow("s3://starter-kits-sars/out", 1));
 
         // Launch the pipeline and block.
         rp.run().waitUntilFinish();

@@ -21,7 +21,7 @@
 /* (C) Copyright IBM Corp. 2017, 2018  All Rights reserved.         */
 /*                                                                  */
 /* end_generated_IBM_copyright_prolog                               */
-package com.ibm.streams.beam.sample.datahistorian.io.mh;
+package com.ibm.streams.beam.sample.datahistorian;
 
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -34,7 +34,7 @@ import org.apache.beam.sdk.options.PipelineOptions;
  * This is a option class that allows users to provide a Message Hub topic and
  * the path to the credentials file. Both options are required.
  */
-public interface MessageHubOptions extends PipelineOptions, ApplicationNameOptions {
+public interface DataHistorianOptions extends PipelineOptions, ApplicationNameOptions {
     /**
      * @param topic the Message Hub topic which can be created in the IBM Cloud
      *              Message Hub's manage page.
@@ -48,13 +48,13 @@ public interface MessageHubOptions extends PipelineOptions, ApplicationNameOptio
      *                     credentials.
      */
     void setCred(String credFilePath);
-    @Default.String("src/main/java/com/ibm/streams/beam/sample/datahistorian/creds.json")
+    @Default.String("creds.json")
     String getCred();
 
     void setAwsServiceEndpoint(String ep);
     String getAwsServiceEndpoint();
 
-//    void setAwsCredentialsProvider(AWSCredentialsProvider prov);
-//    @Default.InstanceFactory(AwsOptions.AwsUserCredentialsFactory.class)
-//    AWSCredentialsProvider getAwsCredentialsProvider();
+    void setAwsCredentialsProvider(AWSCredentialsProvider prov);
+    @Default.InstanceFactory(AwsOptions.AwsUserCredentialsFactory.class)
+    AWSCredentialsProvider getAwsCredentialsProvider();
 }

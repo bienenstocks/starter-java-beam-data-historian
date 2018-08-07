@@ -23,6 +23,7 @@
 /* end_generated_IBM_copyright_prolog                               */
 package com.ibm.streams.beam.sample.datahistorian.io.mh;
 
+import com.ibm.streams.beam.sample.datahistorian.DataHistorianOptions;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.kafka.KafkaIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
@@ -53,10 +54,10 @@ public class Consumer {
 
     public static void main(String args[]) throws IOException, ParseException {
         // Create options
-        MessageHubOptions options =
+        DataHistorianOptions options =
                 PipelineOptionsFactory.fromArgs(args)
                         .withValidation()
-                        .as(MessageHubOptions.class);
+                        .as(DataHistorianOptions.class);
 
         // Parse credentials file
         MessageHubConfig config = new MessageHubConfig(options.getCred());
