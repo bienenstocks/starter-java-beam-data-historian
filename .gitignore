@@ -1,3 +1,5 @@
+config.json
+*.iml
 .idea/
 !.idea/runConfigurations/
 target/
