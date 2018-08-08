@@ -6,8 +6,8 @@
       "link": "https://console.bluemix.net/docs/cloudnative/tutorial_web.html#before-you-begin"
     }
   ],
-  "description": "Temperature simulation that gets you up and running with Apache Beam and Streaming Analytics",
-  "name": "Apache Beam Java temperature example",
+  "description": "Data historian example that gets you up and running with Apache Beam and Streaming Analytics",
+  "name": "Apache Beam Java data historian example",
   "previewURLs": [],
   "type": "OTHER",
   "toolchain" : ["GENERIC"],
