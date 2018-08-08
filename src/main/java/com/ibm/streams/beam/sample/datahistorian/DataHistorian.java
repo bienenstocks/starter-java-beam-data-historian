@@ -1,8 +1,15 @@
 package com.ibm.streams.beam.sample.datahistorian;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.ibm.streams.beam.sample.datahistorian.io.mh.MessageHubConfig;
 import com.ibm.streams.beam.sample.datahistorian.io.aws.AWSConfig;
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.coders.CoderRegistry;
+import org.apache.beam.sdk.coders.DefaultCoder;
+import org.apache.beam.sdk.coders.SerializableCoder;
+import org.apache.beam.sdk.extensions.jackson.AsJsons;
+import org.apache.beam.sdk.extensions.jackson.ParseJsons;
 import org.apache.beam.sdk.io.FileBasedSink;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.fs.ResourceId;
@@ -21,6 +28,7 @@ import org.joda.time.Duration;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import static org.apache.beam.sdk.repackaged.com.google.common.base.Preconditions.checkArgument;
 
@@ -36,7 +44,24 @@ public class DataHistorian {
         }
     }
 
+    private final static CoderRegistry coderRegistry = CoderRegistry.createDefault();
+
+    public static class DHMessageRecord implements Serializable {
+        public String id = null;
+        public String tz = null;
+        public String timestamp = null;
+        public String dateutc = null;
+        public Double latitude = null;
+        public Double longitude = null;
+        public Double temperature = null;
+        public Double baromin = null;
+        public Double humidity = null;
+        public String rainin = null;
+    }
+
     public static void main(String args[]) throws IOException, ParseException {
+//        coderRegistry.registerCoderForClass(DHMessageRecord.class, new DefaultCoder());
+
         // Create options
         DataHistorianOptions options =
                 PipelineOptionsFactory.fromArgs(args)
@@ -56,9 +81,9 @@ public class DataHistorian {
 
         Pipeline rp = Pipeline.create(options);
 
-        PCollection pc =
-        // Add KafkaIO#write and provide configurations.
-        rp.apply(KafkaIO.<String, String>read()
+        PCollection pc = rp
+        // Add KafkaIO#read and provide configurations.
+        .apply(KafkaIO.<String, String>read()
                 .withBootstrapServers(config.getBootstrapServers())
                 .withTopic(options.getTopic())
                 .updateConsumerProperties(config)
@@ -70,32 +95,34 @@ public class DataHistorian {
         // Drop the dummy key "beam"
         .apply(Values.create())
 
-        .apply(Window.into(FixedWindows.of(Duration.millis(1000))));
+        // Parse JSON
+        .apply(ParseJsons.of(DHMessageRecord.class))
+        .setCoder(SerializableCoder.of(DHMessageRecord.class))
 
-        // Print messages to System.out
+        // First windowing
+        .apply(Window.into(FixedWindows.of(Duration.millis(1000))))
+
+        // TODO: transforms: mean, stddev, min, max
+
+        // Second windowing
+        .apply(Window.into(FixedWindows.of(Duration.millis(10000))))
+
+        // TODO: transforms: mean, stddev, min, max
+
+        // Serialize to JSON, in preparation for output to sink(s)
+        .apply(AsJsons.of(DHMessageRecord.class));
+
+        // Print messages to System.out, for debugging
         pc.apply(ParDo.of(new PrintDoFn()));
 
+        // Print to temp files, for debugging
         pc.apply(new WriteOneFilePerWindow("/tmp/out", 1));
 
+        // Production output to COS
         pc.apply(new WriteOneFilePerWindow("s3://" + bucket + "/" + filePrefix, 1));
 
         // Launch the pipeline and block.
         rp.run().waitUntilFinish();
     }
 
-//    @Override
-    public PDone expand(PCollection<String> input) {
-        // Verify that the input has a compatible window type.
-        checkArgument(
-                input.getWindowingStrategy().getWindowFn().windowCoder() == IntervalWindow.getCoder());
-
-        ResourceId resource = FileBasedSink.convertToFileResourceIfPossible("out");
-
-        return input.apply(
-                TextIO.write()
-//                        .to(new PerWindowFiles(resource))
-                        .withTempDirectory(resource.getCurrentDirectory())
-                        .withWindowedWrites()
-                        .withNumShards(3));
-    }
 }
