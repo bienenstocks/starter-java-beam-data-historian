@@ -115,6 +115,6 @@ public class Producer {
 
     private static void addCurrentTimestamp(JSONObject tuple) {
         String iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        tuple.put("time_stamp", iso);
+        tuple.put("timestamp", iso);
     }
 }
