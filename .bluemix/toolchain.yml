@@ -1,4 +1,3 @@
-{{! This file is processed with handlebars. The tag helper will return the provided string in double braces}}
 version: '2'
 template:
   name: Continuous Delivery Toolchain
@@ -34,6 +33,12 @@ services:
           $text: pipeline.yml
         env:
           REPO: repo
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          SA_INSTANCE: '{{form.pipeline.parameters.sa-instance}}'
+          MH_INSTANCE: '{{form.pipeline.parameters.mh-instance}}'
+          COS_INSTANCE: '{{form.pipeline.parameters.cos-instance}}'
         execute: true
 
   #Web IDE

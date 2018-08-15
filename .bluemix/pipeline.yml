@@ -27,6 +27,15 @@ stages:
   - name: streaming_analytics_credentials
     value: 'ENTER STREAMING ANALYTICS CREDENTIALS HERE'
     type: text_area
+  - name: PIPELINE_SA_INSTANCE
+    value: ${SA_INSTANCE}
+    type: text_area
+  - name: PIPELINE_MH_INSTANCE
+    value: ${MH_INSTANCE}
+    type: text_area
+  - name: PIPELINE_COS_INSTANCE
+    value: ${COS_INSTANCE}
+    type: text_area
   jobs:
   - name: Deploy flow
     type: deployer
@@ -35,12 +44,20 @@ stages:
       #!/bin/bash
 
       echo "generating vcap.json"
-      echo "{
-        \"streaming-analytics\":[{
-          \"name\" : \"streaming-analytics\",
-          \"credentials\" : $streaming_analytics_credentials
-        }]
-      }" > vcap.json
+      echo $PIPELINE_API_KEY
+      echo $PIPELINE_COS_INSTANCE
+      echo $PIPELINE_SA_INSTANCE
+      echo $PIPELINE_MH_INSTANCE
+
+      echo "generating vcap.json"
+        echo "{
+                \"streaming-analytics\":[{
+                    \"name\" : \"streaming-analytics\",
+                    \"credentials\" : $PIPELINE_SA_INSTANCE
+                  }],
+                  \"message_hub\": $PIPELINE_MH_INSTANCE,
+                  \"cos\": $PIPELINE_COS_INSTANCE
+              }" > vcap.json
 
       java -cp ./example-starter-kit-0.1-SNAPSHOT.jar:./dependency/com.ibm.streams.beam-1.2.1/com.ibm.streams.beam/lib/com.ibm.streams.beam.translation.jar \
       com.ibm.streams.beam.sample.temperature.TemperatureSample \

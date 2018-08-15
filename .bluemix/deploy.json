@@ -35,63 +35,94 @@
     "app-name": {
       "description": "app name",
       "type": "string"
-    }
+    },
+    "sa-instance": {
+      "description": "Streaming Analytics Instance Name",
+      "type": "string"
+    },
+    "mh-instance": {
+      "description": "Message Hub Instance Name",
+      "type": "string"
+    },
+    "cos-instance": {
+      "description": "Cloud Object Storage Instance Name",
+      "type": "string"
+    },
   },
   "required": ["dev-region", {{#has deployment.type 'CF'}}"dev-organization", "dev-space", {{/has}} "app-name"{{#has deployment.type 'Kube'}}, "api-key", "image-registry-token", "image-pull-secret-name", "kube-cluster-name"{{/has}}],
   "form": [
-  {
-    "type": "validator",
-    "url": "/devops/setup/bm-helper/helper.html"
-  },
-  {{#has deployment.type 'Kube'}}
-  {
-    "type": "password",
-    "readonly": false,
-    "title": "IBM Cloud API Key",
-    "key": "api-key"
-  }, {
-    "type": "password",
-    "readonly": false,
-    "title": "Container Registry access token",
-    "key": "image-registry-token"
-  }, {
-    "type": "text",
-    "readonly": false,
-    "title": "Kubernetes Cluster Name",
-    "key": "kube-cluster-name"
-  },
-  {{/has}}
-  {
-    "type": "text",
-    "readonly": false,
-    "title": "App Name",
-    "key": "app-name"
-  }, {
-    "type": "table",
-    {{#has deployment.type 'CF'}}
-    "columnCount": 3,
-    "widths": ["28%", "28%", "28%"],
-    "items": [
-      {
-        "type": "label",
-        "title": "Region"
-      }, {
-        "type": "label",
-        "title": "Organization"
-      }, {
-        "type": "label",
-        "title": "Space"
-      }, {
-        "type": "select",
-        "key": "dev-region"
-      }, {
-        "type": "select",
-        "key": "dev-organization"
-      }, {
-        "type": "select",
-        "key": "dev-space",
-        "readonly": false
-      }
+    {
+      "type": "validator",
+      "url": "/devops/setup/bm-helper/helper.html"
+    },
+    {{#has deployment.type 'Kube'}}
+    {
+      "type": "password",
+      "readonly": false,
+      "title": "IBM Cloud API Key",
+      "key": "api-key"
+    }, {
+      "type": "password",
+      "readonly": false,
+      "title": "Container Registry access token",
+      "key": "image-registry-token"
+    }, {
+      "type": "text",
+      "readonly": false,
+      "title": "Kubernetes Cluster Name",
+      "key": "kube-cluster-name"
+    },
+    {{/has}}
+    {
+      "type": "text",
+      "readonly": false,
+      "title": "App Name",
+      "key": "app-name"
+    },
+    {
+      "type": "textarea",
+      "readonly": false,
+      "title": "Streaming Analytics Service Credentials",
+      "key": "sa-instance"
+    },
+    {
+      "type": "textarea",
+      "readonly": false,
+      "title": "Message Hub Service Credentials",
+      "key": "mh-instance"
+    },
+    {
+      "type": "textarea",
+      "readonly": false,
+      "title": "Cloud Object Storage Service Credentials",
+      "key": "cos-instance"
+    },
+    {
+      "type": "table",
+      {{#has deployment.type 'CF'}}
+      "columnCount": 3,
+      "widths": ["28%", "28%", "28%"],
+      "items": [
+        {
+          "type": "label",
+          "title": "Region"
+        }, {
+          "type": "label",
+          "title": "Organization"
+        }, {
+          "type": "label",
+          "title": "Space"
+        }, {
+          "type": "select",
+          "key": "dev-region"
+        }, {
+          "type": "select",
+          "key": "dev-organization"
+        }, {
+          "type": "select",
+          "key": "dev-space",
+          "readonly": false
+        }
     ]
     {{/has}}
     {{#has deployment.type 'Kube'}}
