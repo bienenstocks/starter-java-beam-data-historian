@@ -1,0 +1,143 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "messages": {
+        "$i18n": "locales.yml"
+    },
+    "title": {
+        "$ref": "#/messages/deploy.title"
+    },
+    "description": {
+        "$ref": "#/messages/deploy.description"
+    },
+    "longDescription": {
+        "$ref": "#/messages/deploy.longDescription"
+    },
+    "type": "object",
+    "properties": {
+       "sa-instance": {
+         "description": "Streaming Analytics Instance Name",
+          "type": "string"
+       },
+       "mh-instance": {
+          "description": "Message Hub Instance Name",
+          "type": "string"
+        },
+        "cos-instance": {
+          "description": "Cloud Object Storage Instance Name",
+          "type": "string"
+        },
+        "prod-region": {
+            "description": "The bluemix region",
+            "type": "string"
+        },
+        "prod-organization": {
+            "description": "The bluemix org",
+            "type": "string"
+        },
+        "prod-space": {
+            "description": "The bluemix space",
+            "type": "string"
+        },
+        "prod-app-name": {
+            "description": {
+                "$ref": "#/messages/deploy.appDescription"
+            },
+            "type": "string",
+            "pattern": "\\S"
+        }
+    },
+    "required": [
+        "sa-instance",
+        "mh-instance",
+        "cos-instance",
+        "prod-region",
+        "prod-organization",
+        "prod-space",
+        "prod-app-name"
+    ],
+    "form": [
+        {
+            "type": "validator",
+            "url": "/devops/setup/bm-helper/helper.html"
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.appName"
+            },
+            "key": "prod-app-name"
+        },
+        {
+           "type": "textarea",
+           "readonly": false,
+           "title": "Streaming Analytics Service Credentials",
+           "key": "sa-instance"
+        },
+        {
+          "type": "textarea",
+          "readonly": false,
+          "title": "Message Hub Service Credentials",
+          "key": "mh-instance"
+       },
+       {
+          "type": "textarea",
+          "readonly": false,
+          "title": "Cloud Object Storage Service Credentials",
+          "key": "cos-instance"
+        },
+        {
+            "type": "table",
+            "columnCount": 4,
+            "widths": [
+                "15%",
+                "28%",
+                "28%",
+                "28%"
+            ],
+            "items": [
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/region"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/organization"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/space"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/prodStage"
+                    }
+                },
+                {
+                    "type": "select",
+                    "key": "prod-region"
+                },
+                {
+                    "type": "select",
+                    "key": "prod-organization"
+                },
+                {
+                    "type": "select",
+                    "key": "prod-space",
+                    "readonly": false
+                }
+            ]
+        }
+    ]
+}

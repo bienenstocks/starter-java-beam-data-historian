@@ -1,0 +1,63 @@
+---
+stages:
+- name: BUILD
+  inputs:
+  - type: git
+    branch: master
+    service: ${SAMPLE_REPO}
+  triggers:
+  - type: commit
+  jobs:
+  - name: Build
+    type: builder
+- name: DEPLOY
+  inputs:
+  - type: job
+    stage: BUILD
+    job: Build
+  triggers:
+  - type: stage
+  properties:
+  - name: CF_APP_NAME
+    value: undefined
+    type: text
+  - name: PIPELINE_API_KEY
+    value: ${API_KEY}
+    type: text
+  - name: PIPELINE_SA_INSTANCE
+    value: ${SA_INSTANCE}
+    type: text
+  - name: PIPELINE_MH_INSTANCE
+    value: ${MH_INSTANCE}
+    type: text
+  - name: PIPELINE_COS_INSTANCE
+    value: ${COS_INSTANCE}
+    type: text
+  jobs:
+  - name: Rolling Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |
+      #!/bin/bash
+      # Push app
+
+      echo $PIPELINE_API_KEY
+      echo $PIPELINE_COS_INSTANCE
+      echo $PIPELINE_SA_INSTANCE
+      echo $PIPELINE_MH_INSTANCE
+
+      echo "generating vcap.json"
+            echo "{
+              \"streaming-analytics\":[{
+                \"name\" : \"streaming-analytics\",
+                \"credentials\" : $PIPELINE_SA_INSTANCE
+              }],
+              \"message_hub\": $PIPELINE_MH_INSTANCE,
+              \"cos\": $PIPELINE_COS_INSTANCE
+            }" > vcap.json
+
+
