@@ -16,11 +16,11 @@ stages:
         #!/bin/bash
         export JAVA_HOME=$JAVA8_HOME
         mvn -B -Pstreams-runner package
-- name: DEPLOY
+- name: Deploy flow to development
   inputs:
   - type: job
-    stage: BUILD
-    job: Build
+    stage: Build flow
+    job: Build driver
   triggers:
   - type: stage
   properties:
@@ -42,6 +42,7 @@ stages:
   jobs:
   - name: Rolling Deploy
     type: deployer
+    deploy_type: customimage
     target:
       region_id: ${PROD_REGION_ID}
       organization: ${PROD_ORG_NAME}

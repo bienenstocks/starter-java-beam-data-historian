@@ -23,10 +23,10 @@ toolchain:
       $ref: "#/messages/template.gettingStarted"
 services:
   sample-repo:
-    service_id: hostedgit
+    service_id: githubpublic
     parameters:
       repo_name: '{{toolchain.name}}'
-      repo_url: 'https://github.ibm.com/wdp-streaming-pipelines/starter-java-beam-data-historian/tree/deploy-pipeline'
+      repo_url: 'https://github.com/bienenstocks/pipelinedeploy'
       type: clone
       has_issues: true
       enable_traceability: true
