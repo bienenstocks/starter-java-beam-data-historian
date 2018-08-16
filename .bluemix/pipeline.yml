@@ -9,7 +9,11 @@ stages:
   - type: commit
   jobs:
   - name: Build
-    type: builder
+    build_type: maven
+    script: |-
+          #!/bin/bash
+          export JAVA_HOME=$JAVA8_HOME
+          mvn -B -Pstreams-runner package
 - name: DEPLOY
   inputs:
   - type: job
@@ -61,12 +65,12 @@ stages:
             }" > vcap.json
 
       java -cp ./example-starter-kit-0.1-SNAPSHOT.jar:./dependency/com.ibm.streams.beam-1.2.1/com.ibm.streams.beam/lib/com.ibm.streams.beam.translation.jar \
-            com.ibm.streams.beam.sample.temperature.TemperatureSample \
+            com.ibm.streams.beam.sample.datahistorian.DataHistorian \
             --runner=StreamsRunner \
             --contextType=STREAMING_ANALYTICS_SERVICE \
             --vcapServices=./vcap.json \
             --serviceName=streaming-analytics \
             --beamToolkitDir=./dependency/com.ibm.streams.beam-1.2.1 \
             --jarsToStage=./example-starter-kit-0.1-SNAPSHOT.jar \
-            --jobName={{name}}
+            --jobName=${CF_APP_NAME}
     docker_image: maven:3.5.3-ibmjava
