@@ -8,12 +8,14 @@ stages:
   triggers:
   - type: commit
   jobs:
-  - name: Build
+  - name: Build driver
+    type: builder
+    artifact_dir: target
     build_type: maven
     script: |-
-          #!/bin/bash
-          export JAVA_HOME=$JAVA8_HOME
-          mvn -B -Pstreams-runner package
+        #!/bin/bash
+        export JAVA_HOME=$JAVA8_HOME
+        mvn -B -Pstreams-runner package
 - name: DEPLOY
   inputs:
   - type: job
