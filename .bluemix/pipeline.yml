@@ -9,11 +9,7 @@ stages:
   - type: commit
   jobs:
   - name: Build
-    build_type: maven
-    script: |-
-          #!/bin/bash
-          export JAVA_HOME=$JAVA8_HOME
-          mvn -B -Pstreams-runner package
+    type: builder
 - name: DEPLOY
   inputs:
   - type: job
@@ -72,5 +68,5 @@ stages:
             --serviceName=streaming-analytics \
             --beamToolkitDir=./dependency/com.ibm.streams.beam-1.2.1 \
             --jarsToStage=./example-starter-kit-0.1-SNAPSHOT.jar \
-            --jobName=${CF_APP_NAME}
+            --jobName=$CF_APP_NAME
     docker_image: maven:3.5.3-ibmjava
