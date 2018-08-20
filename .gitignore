@@ -1,3 +1,4 @@
+vcap.json
 config.json
 *.iml
 .idea/
