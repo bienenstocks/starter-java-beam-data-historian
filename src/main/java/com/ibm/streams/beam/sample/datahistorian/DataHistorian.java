@@ -8,8 +8,8 @@ import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.CoderRegistry;
 import org.apache.beam.sdk.coders.DefaultCoder;
 import org.apache.beam.sdk.coders.SerializableCoder;
-//import org.apache.beam.sdk.extensions.jackson.AsJsons; SARS
-// import org.apache.beam.sdk.extensions.jackson.ParseJsons; SARS
+import org.apache.beam.sdk.extensions.jackson.AsJsons;
+import org.apache.beam.sdk.extensions.jackson.ParseJsons;
 import org.apache.beam.sdk.io.FileBasedSink;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.fs.ResourceId;
@@ -96,8 +96,8 @@ public class DataHistorian {
         .apply(Values.create())
 
         // Parse JSON
-        // .apply(ParseJsons.of(DHMessageRecord.class)) SARS
-        // .setCoder(SerializableCoder.of(DHMessageRecord.class)) SARS
+        .apply(ParseJsons.of(DHMessageRecord.class))
+        .setCoder(SerializableCoder.of(DHMessageRecord.class))
 
         // First windowing
         .apply(Window.into(FixedWindows.of(Duration.millis(1000))))
@@ -105,12 +105,12 @@ public class DataHistorian {
         // TODO: transforms: mean, stddev, min, max
 
         // Second windowing
-        .apply(Window.into(FixedWindows.of(Duration.millis(10000))));
+        .apply(Window.into(FixedWindows.of(Duration.millis(10000))))
 
         // TODO: transforms: mean, stddev, min, max
 
         // Serialize to JSON, in preparation for output to sink(s)
-        // .apply(AsJsons.of(DHMessageRecord.class)); SARS
+        .apply(AsJsons.of(DHMessageRecord.class));
 
         // Print messages to System.out, for debugging
         pc.apply(ParDo.of(new PrintDoFn()));
@@ -122,7 +122,9 @@ public class DataHistorian {
         pc.apply(new WriteOneFilePerWindow("s3://" + bucket + "/" + filePrefix, 1));
 
         // Launch the pipeline and block.
-        rp.run().waitUntilFinish();
+        rp.run();
+
+        return;
     }
 
 }

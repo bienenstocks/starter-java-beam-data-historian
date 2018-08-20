@@ -13,9 +13,9 @@ template:
     - sample-repo
   info:
     git url: >-
-      [https://github.com/bienenstocks/simple-toolchain-hosted](https://github.com/bienenstocks/simple-toolchain-hosted)
+      [https://github.com/bienenstocks/pipelinedeploy](https://github.com/bienenstocks/pipelinedeploy)
     git branch: >-
-      [master](https://github.com/bienenstocks/simple-toolchain-hosted/tree/master)
+      [master](https://github.com/bienenstocks/pipelinedeploy/tree/master)
 toolchain:
   name: 'simple-toolchain-{{timestamp}}'
   template:
@@ -23,7 +23,7 @@ toolchain:
       $ref: "#/messages/template.gettingStarted"
 services:
   sample-repo:
-    service_id: githubpublic
+    service_id: hostedgit
     parameters:
       repo_name: '{{toolchain.name}}'
       repo_url: 'https://github.com/bienenstocks/pipelinedeploy'
@@ -46,9 +46,12 @@ services:
           PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
           PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
           PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
-          SA_INSTANCE: '{{form.pipeline.parameters.sa-instance}}'
+          SA_INSTANCE: "{{form.pipeline.parameters.sa-instance}}"
           MH_INSTANCE: '{{form.pipeline.parameters.mh-instance}}'
-          COS_INSTANCE: '{{form.pipeline.parameters.cos-instance}}'
+          COS_SECRET: '{{form.pipeline.parameters.aws-secret-access-key}}'
+          COS_KEY: '{{form.pipeline.parameters.aws-access-key-id}}'
+          COS_BUCKET: '{{form.pipeline.parameters.aws-bucket}}'
+          COS_ENDPOINT: '{{form.pipeline.parameters.aws-endpoint}}'
         execute: true
   webide:
     service_id: orion
