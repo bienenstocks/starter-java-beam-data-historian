@@ -24,6 +24,8 @@
 package com.ibm.streams.beam.sample.datahistorian.io.aws;
 
 import com.ibm.streams.beam.sample.datahistorian.DataHistorianOptions;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -38,28 +40,27 @@ public class AWSConfig {
         // parse credentials file into a JSONObject
         JSONParser parser = new JSONParser();
         JSONObject cred = (JSONObject) parser.parse(new FileReader(options.getCred()));
-        JSONObject awscred = (JSONObject) cred.get("aws");
-        options.setAwsServiceEndpoint((String) awscred.get("awsServiceEndpoint"));
-        options.setAwsCredentialsProvider(
-                new CustomAWSCredentialsProvider(
-                        (String) awscred.get("awsAccessKeyId"),
-                        (String) awscred.get("awsSecretKey")));
+        JSONObject coscred = (JSONObject) cred.get("cos");
+        options.setAwsServiceEndpoint((String) coscred.get("endpoint"));
+        options.setAwsCredentialsProvider(new AWSStaticCredentialsProvider(
+                new BasicAWSCredentials((String) coscred.get("accessKeyId"),
+                                    (String) coscred.get("secretKey"))));
     }
 
     public static String getBucket(DataHistorianOptions options) throws IOException, ParseException{
         // parse credentials file into a JSONObject
         JSONParser parser = new JSONParser();
         JSONObject cred = (JSONObject) parser.parse(new FileReader(options.getCred()));
-        JSONObject awscred = (JSONObject) cred.get("aws");
-        return (String) awscred.get("bucket");
+        JSONObject coscred = (JSONObject) cred.get("cos");
+        return (String) coscred.get("bucket");
     }
 
     public static String getFilePrefix(DataHistorianOptions options) throws IOException, ParseException {
         // parse credentials file into a JSONObject
         JSONParser parser = new JSONParser();
         JSONObject cred = (JSONObject) parser.parse(new FileReader(options.getCred()));
-        JSONObject awscred = (JSONObject) cred.get("aws");
-        return (String) awscred.get("filePrefix");
+        JSONObject coscred = (JSONObject) cred.get("cos");
+        return (String) coscred.get("filePrefix");
     }
 }
 

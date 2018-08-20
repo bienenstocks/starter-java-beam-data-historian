@@ -1,8 +1,0 @@
-{
-  "streaming-analytics":[{
-    "name" : "streaming-analytics",
-    "credentials" : {
-      "<COPY CREDENTIALS HERE>"
-    }
-  }]
-}

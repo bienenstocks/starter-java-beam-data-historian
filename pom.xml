@@ -111,12 +111,12 @@ CONDITIONS OF ANY KIND, either express or implied. See the ~ License for the spe
       <artifactId>beam-sdks-java-extensions-json-jackson</artifactId>
       <version>${beam.version}</version>
     </dependency>
-    <!--<dependency>-->
+      <!--<dependency>-->
       <!--<groupId>org.apache.beam</groupId>-->
       <!--<artifactId>beam-sdks-java-extensions-coders</artifactId>-->
       <!--&lt;!&ndash;<version>${beam.version}</version>&ndash;&gt;-->
-    <!--</dependency>-->
-    <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-io-kafka -->
+      <!--</dependency>-->
+      <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-io-kafka -->
     <dependency>
       <groupId>org.apache.beam</groupId>
       <artifactId>beam-sdks-java-io-kafka</artifactId>

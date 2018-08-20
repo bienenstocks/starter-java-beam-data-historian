@@ -122,7 +122,9 @@ public class DataHistorian {
         pc.apply(new WriteOneFilePerWindow("s3://" + bucket + "/" + filePrefix, 1));
 
         // Launch the pipeline and block.
-        rp.run().waitUntilFinish();
+        rp.run();
+
+        return;
     }
 
 }

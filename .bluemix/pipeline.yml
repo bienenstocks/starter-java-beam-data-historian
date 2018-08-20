@@ -1,0 +1,113 @@
+---
+stages:
+- name: Build flow
+  inputs:
+  - type: git
+    branch: master
+    service: ${SAMPLE_REPO}
+  triggers:
+  - type: commit
+  jobs:
+  - name: Build driver
+    type: builder
+    artifact_dir: target
+    build_type: maven
+    script: |-
+        #!/bin/bash
+        export JAVA_HOME=$JAVA8_HOME
+        mvn -B -Pstreams-runner package
+- name: Deploy flow to development
+  inputs:
+  - type: job
+    stage: Build flow
+    job: Build driver
+  triggers:
+  - type: stage
+  properties:
+  - name: CF_APP_NAME
+    value: ${CF_APP_NAME}
+    type: text
+  - name: PIPELINE_API_KEY
+    value: ${API_KEY}
+    type: text
+  - name: PIPELINE_SA_INSTANCE
+    value: ${SA_INSTANCE}
+    type: textarea
+  - name: PIPELINE_MH_INSTANCE
+    value: ${MH_INSTANCE}
+    type: textarea
+  - name: COS_SECRET_ACCESS_KEY
+    value: ${COS_SECRET}
+    type: Secure
+  - name: COS_ACCESS_KEY_ID
+    value: ${COS_KEY}
+    type: text
+  - name: PIPELINE_COS_BUCKET
+    value: ${COS_BUCKET}
+    type: text
+  - name: PIPELINE_COS_ENDPOINT
+    value: ${COS_ENDPOINT}
+    type: text
+  jobs:
+  - name: Deploy flow
+    type: deployer
+    deploy_type: customimage
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |
+      #!/bin/bash
+      # Push app
+
+      echo "PIPELINE_SA_INSTANCE=$(echo -e "${PIPELINE_SA_INSTANCE}" | tr -d '[:space:]')"
+      PIPELINE_SA_INSTANCE=$(echo -e "${PIPELINE_SA_INSTANCE}" | tr -d '[:space:]')
+      echo "PIPELINE_MH_INSTANCE=$(echo -e "${PIPELINE_MH_INSTANCE}" | tr -d '[:space:]')"
+      PIPELINE_MH_INSTANCE=$(echo -e "${PIPELINE_MH_INSTANCE}" | tr -d '[:space:]')
+
+      echo $region_id
+      if [[ $PIPELINE_COS_ENDPOINT != \"* ]]; then
+        PIPELINE_COS_ENDPOINT=\"$PIPELINE_COS_ENDPOINT\"
+      fi
+
+      if [[ $PIPELINE_COS_BUCKET != \"* ]]; then
+        PIPELINE_COS_BUCKET=\"$PIPELINE_COS_BUCKET\"
+      fi
+
+      if [[ $COS_ACCESS_KEY_ID != \"* ]]; then
+        COS_ACCESS_KEY_ID=\"$COS_ACCESS_KEY_ID\"
+      fi
+
+      if [[ $COS_SECRET_ACCESS_KEY != \"* ]]; then
+        COS_SECRET_ACCESS_KEY=\"$COS_SECRET_ACCESS_KEY\"
+      fi
+
+      echo "generating vcap.json"
+            echo "{
+              \"streaming-analytics\":[{
+                \"name\" : \"streaming-analytics\",
+                \"credentials\" : $PIPELINE_SA_INSTANCE
+              }],
+              \"messagehub\": $PIPELINE_MH_INSTANCE,
+              \"cos\": {
+                \"accessKeyId\": $COS_ACCESS_KEY_ID,
+                \"secretKey\": $COS_SECRET_ACCESS_KEY,
+                \"endpoint\": $PIPELINE_COS_ENDPOINT,
+                \"bucket\": $PIPELINE_COS_BUCKET,
+                \"filePrefix\": \"$CF_APP_NAME\"
+              }
+            }" > vcap.json
+
+      cat ./vcap.json
+
+      java -cp ./example-starter-kit-0.1-SNAPSHOT.jar:./dependency/com.ibm.streams.beam-1.2.1/com.ibm.streams.beam/lib/com.ibm.streams.beam.translation.jar \
+            com.ibm.streams.beam.sample.datahistorian.DataHistorian \
+            --runner=StreamsRunner \
+            --contextType=STREAMING_ANALYTICS_SERVICE \
+            --vcapServices=./vcap.json \
+            --serviceName=streaming-analytics \
+            --beamToolkitDir=./dependency/com.ibm.streams.beam-1.2.1 \
+            --jarsToStage=./example-starter-kit-0.1-SNAPSHOT.jar \
+            --jobName=$CF_APP_NAME
+    docker_image: maven:3.5.3-ibmjava
