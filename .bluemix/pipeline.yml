@@ -7,15 +7,30 @@ stages:
     service: ${SAMPLE_REPO}
   triggers:
   - type: commit
+  properties:
+  - name: SA_INSTANCE
+    value: ${SA_INSTANCE}
+    type: textarea
+  - name: MH_INSTANCE
+    value: ${MH_INSTANCE}
+    type: textarea
   jobs:
   - name: Build driver
     type: builder
     artifact_dir: target
     build_type: maven
     script: |-
-        #!/bin/bash
-        export JAVA_HOME=$JAVA8_HOME
-        mvn -B -Pstreams-runner package
+      #!/bin/bash
+      SA_INSTANCE=$(echo -e "${SA_INSTANCE}" | tr -d '[:space:]' | sed 's/"/\\"/g')
+      MH_INSTANCE=$(echo -e "${MH_INSTANCE}" | tr -d '[:space:]' | sed 's/"/\\"/g')
+
+      [[ -d "${ARCHIVE_DIR}" ]] || mkdir ${ARCHIVE_DIR}
+
+      `echo "SA_INSTANCE=${SA_INSTANCE}" >> $ARCHIVE_DIR/build.properties`
+      `echo "MH_INSTANCE=${MH_INSTANCE}" >> $ARCHIVE_DIR/build.properties`
+
+      export JAVA_HOME=$JAVA8_HOME
+      mvn -B -Pstreams-runner package
 - name: Deploy flow to development
   inputs:
   - type: job
@@ -30,12 +45,6 @@ stages:
   - name: PIPELINE_API_KEY
     value: ${API_KEY}
     type: text
-  - name: PIPELINE_SA_INSTANCE
-    value: ${SA_INSTANCE}
-    type: textarea
-  - name: PIPELINE_MH_INSTANCE
-    value: ${MH_INSTANCE}
-    type: textarea
   - name: COS_SECRET_ACCESS_KEY
     value: ${COS_SECRET}
     type: Secure
@@ -61,12 +70,8 @@ stages:
       #!/bin/bash
       # Push app
 
-      echo "PIPELINE_SA_INSTANCE=$(echo -e "${PIPELINE_SA_INSTANCE}" | tr -d '[:space:]')"
-      PIPELINE_SA_INSTANCE=$(echo -e "${PIPELINE_SA_INSTANCE}" | tr -d '[:space:]')
-      echo "PIPELINE_MH_INSTANCE=$(echo -e "${PIPELINE_MH_INSTANCE}" | tr -d '[:space:]')"
-      PIPELINE_MH_INSTANCE=$(echo -e "${PIPELINE_MH_INSTANCE}" | tr -d '[:space:]')
+      . build.properties
 
-      echo $region_id
       if [[ $PIPELINE_COS_ENDPOINT != \"* ]]; then
         PIPELINE_COS_ENDPOINT=\"$PIPELINE_COS_ENDPOINT\"
       fi
@@ -87,9 +92,9 @@ stages:
             echo "{
               \"streaming-analytics\":[{
                 \"name\" : \"streaming-analytics\",
-                \"credentials\" : $PIPELINE_SA_INSTANCE
+                \"credentials\" : $SA_INSTANCE
               }],
-              \"messagehub\": $PIPELINE_MH_INSTANCE,
+              \"messagehub\": $MH_INSTANCE,
               \"cos\": {
                 \"accessKeyId\": $COS_ACCESS_KEY_ID,
                 \"secretKey\": $COS_SECRET_ACCESS_KEY,
