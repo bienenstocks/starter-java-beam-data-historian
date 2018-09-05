@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ibm.streams.beam.sample.datahistorian;
+package com.ibm.streams.beam.sample.datahistorian.io;
 
 import org.apache.beam.sdk.io.FileBasedSink;
 import org.apache.beam.sdk.io.FileBasedSink.FilenamePolicy;
@@ -77,11 +77,11 @@ public class WriteOneFilePerWindow extends PTransform<PCollection<String>, PDone
 
     private final ResourceId baseFilename;
 
-    public PerWindowFiles(ResourceId baseFilename) {
+    PerWindowFiles(ResourceId baseFilename) {
       this.baseFilename = baseFilename;
     }
 
-    public String filenamePrefixForWindow(IntervalWindow window) {
+    String filenamePrefixForWindow(IntervalWindow window) {
       String prefix =
           baseFilename.isDirectory() ? "" : baseFilename.getFilename();
       return String.format("%s-%s-%s",
