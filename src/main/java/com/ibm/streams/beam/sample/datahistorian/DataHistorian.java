@@ -28,20 +28,7 @@ import java.io.IOException;
 
 public class DataHistorian {
 
-    /**
-     * A simple DoFn that prints message to System.out
-     */
-    private static class PrintDoFn extends DoFn<String, Void> {
-        @ProcessElement
-        public void processElement(ProcessContext c) {
-            System.out.println(c.element());
-        }
-    }
-
-    private final static CoderRegistry coderRegistry = CoderRegistry.createDefault();
-
     public static void main(String args[]) throws IOException, ParseException {
-//        coderRegistry.registerCoderForClass(DHMessageRecord.class, new DefaultCoder());
 
         // Create options
         DataHistorianOptions options =
@@ -73,7 +60,7 @@ public class DataHistorian {
                 // This example does not need meta data
                 .withoutMetadata()
         )
-        // Drop the dummy key "beam"
+        // Drop the dummy key "beam", turning ["beam", [record]] into: [record]
         .apply(Values.create())
 
         .apply("ParseJSON", ParseJsons.of(DHMessageRecord.class))
@@ -81,11 +68,7 @@ public class DataHistorian {
 
         .apply("WindowOneSecond", Window.into(FixedWindows.of(Duration.millis(1000))))
 
-        // TODO: stddev
         .apply("CombineEvents", Combine.globally(new Aggregation1()).withoutDefaults())
-
-        // Second windowing: 10 seconds
-//        .apply(Window.into(FixedWindows.of(Duration.millis(10000))))
 
         .apply("SerializeAsJSON", AsJsons.of(AggregatedRecord.class));
 
@@ -102,5 +85,15 @@ public class DataHistorian {
 
         // Launch the pipeline and block.
         rp.run();
+    }
+
+    /**
+     * A simple DoFn that prints message to System.out
+     */
+    private static class PrintDoFn extends DoFn<String, Void> {
+        @ProcessElement
+        public void processElement(ProcessContext c) {
+            System.out.println(c.element());
+        }
     }
 }
