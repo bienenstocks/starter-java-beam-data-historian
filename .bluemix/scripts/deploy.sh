@@ -4,7 +4,7 @@
          curl -fsSL https://clis.ng.bluemix.net/install/linux | sh
       fi
 
-      # TODO : how to know which env to use ?
+      # TODO : how do you know which env to use ?
       bx login --apikey $PIPELINE_API_KEY -a https://api.ng.bluemix.net
       bx target --cf
 
