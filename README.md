@@ -8,4 +8,4 @@ The data is aggregated and output to the provisioned Cloud Object Storage instan
 
 ### To get started, click **Deploy to IBM Cloud**.
 
-[![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.ibm.com/wdp-streaming-pipelines/starter-java-beam-data-historian/tree/iss%23deploy-pipeline)
+[![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/bienenstocks/starter-java-beam-data-historian/tree/master)
