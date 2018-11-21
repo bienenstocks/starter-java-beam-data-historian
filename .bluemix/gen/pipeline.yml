@@ -1,0 +1,47 @@
+---
+stages:
+- name: Build flow
+  inputs:
+  - type: git
+    branch: master
+    service: ${REPO}
+  triggers:
+  - type: commit
+  jobs:
+  - name: Build driver
+    type: builder
+    artifact_dir: target
+    build_type: maven
+    script: |-
+      #!/bin/bash
+      export JAVA_HOME=$JAVA8_HOME
+      mvn -B -Pstreams-runner package
+      cp .bluemix/scripts/* ${ARCHIVE_DIR}
+- name: Deploy flow to development
+  inputs:
+  - type: job
+    stage: Build flow
+    job: Build driver
+  triggers:
+  - type: stage
+  properties:
+  - name: PIPELINE_API_KEY
+    value: ${API_KEY}
+    type: text
+  - name: APP_NAME
+    value: {{name}}
+    type: text
+ {{#with config.creds.streamingAnalytics.[0]}}
+  - name: SA_INSTANCE
+    value: {{this.serviceInfo.name}}
+    type: text
+ {{/with}}
+  jobs:
+  - name: Deploy flow
+    type: deployer
+    deploy_type: customimage
+    script: |
+      #!/bin/bash
+      chmod u+x deploy.sh
+      ./deploy.sh
+    docker_image: maven:3.5.3-ibmjava

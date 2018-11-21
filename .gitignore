@@ -1,0 +1,8 @@
+vcap.json
+config.json
+*.iml
+.idea/
+!.idea/runConfigurations/
+target/
+*.zip
+dependency-reduced-pom.xml

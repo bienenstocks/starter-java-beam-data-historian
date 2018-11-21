@@ -1,0 +1,14 @@
+{
+  "messagehub": {
+    "user": "<user>",
+    "password": "<password>",
+    "kafka_brokers_sasl": "[<array of kafka brokers>]"
+  },
+  "cos": {
+    "endpoint": "<service endpoint>",
+    "accessKeyId": "<access_key_id>",
+    "secretKey": "<secret_access_key>",
+    "bucket": "<bucket>",
+    "filePrefix": "default"
+  }
+}

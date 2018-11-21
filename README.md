@@ -1,21 +1,11 @@
-# Java Beam Samples
+# Java Beam Sample Application
 A generated IBM Cloud application
 
-[![](https://img.shields.io/badge/IBM%20Cloud-powered-blue.svg)](https://bluemix.net)
+### Continuously deliver an app with IBM hosted repos and issue tracking
 
-## Setup
-- Copy the com.ibm.streams.beam Beam toolkit v1.1.1 to the same directory as the starter project
-- Fill in the vcap.json to point to the service
-- `source ./streams-runner-env.sh`
+This sample Java Beam application runs the DataHistorian pipeline. Data flows from the provisioned Message Hub source.
+The data is aggregated and output to the provisioned Cloud Object Storage instance.
 
-## Run locally using the Beam DirectRunner
+### To get started, click **Deploy to IBM Cloud**.
 
-```bash
-./run-dev
-```
-
-## Deploy to the Streaming Analytics instance
-
-```bash
-./run-remote
-```
+[![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/bienenstocks/starter-java-beam-data-historian/tree/master)
