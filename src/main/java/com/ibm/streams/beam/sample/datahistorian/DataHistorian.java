@@ -1,66 +1,34 @@
 package com.ibm.streams.beam.sample.datahistorian;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
+import com.ibm.streams.beam.sample.datahistorian.io.WriteOneFilePerWindow;
 import com.ibm.streams.beam.sample.datahistorian.io.mh.MessageHubConfig;
 import com.ibm.streams.beam.sample.datahistorian.io.aws.AWSConfig;
+import com.ibm.streams.beam.sample.datahistorian.transforms.Aggregation1;
+import com.ibm.streams.beam.sample.datahistorian.types.AggregatedRecord;
+import com.ibm.streams.beam.sample.datahistorian.types.DHMessageRecord;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.CoderRegistry;
-import org.apache.beam.sdk.coders.DefaultCoder;
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.extensions.jackson.AsJsons;
 import org.apache.beam.sdk.extensions.jackson.ParseJsons;
-import org.apache.beam.sdk.io.FileBasedSink;
-import org.apache.beam.sdk.io.TextIO;
-import org.apache.beam.sdk.io.fs.ResourceId;
 import org.apache.beam.sdk.io.kafka.KafkaIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
+import org.apache.beam.sdk.transforms.Combine;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.Values;
 import org.apache.beam.sdk.transforms.windowing.FixedWindows;
-import org.apache.beam.sdk.transforms.windowing.IntervalWindow;
 import org.apache.beam.sdk.transforms.windowing.Window;
 import org.apache.beam.sdk.values.PCollection;
-import org.apache.beam.sdk.values.PDone;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.joda.time.Duration;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.io.Serializable;
-
-import static org.apache.beam.sdk.repackaged.com.google.common.base.Preconditions.checkArgument;
 
 public class DataHistorian {
 
-    /**
-     * A simple DoFn that prints message to System.out
-     */
-    private static class PrintDoFn extends DoFn<String, Void> {
-        @ProcessElement
-        public void processElement(ProcessContext c) {
-            System.out.println(c.element());
-        }
-    }
-
-    private final static CoderRegistry coderRegistry = CoderRegistry.createDefault();
-
-    public static class DHMessageRecord implements Serializable {
-        public String id = null;
-        public String tz = null;
-        public String timestamp = null;
-        public String dateutc = null;
-        public Double latitude = null;
-        public Double longitude = null;
-        public Double temperature = null;
-        public Double baromin = null;
-        public Double humidity = null;
-        public String rainin = null;
-    }
-
     public static void main(String args[]) throws IOException, ParseException {
-//        coderRegistry.registerCoderForClass(DHMessageRecord.class, new DefaultCoder());
 
         // Create options
         DataHistorianOptions options =
@@ -83,7 +51,7 @@ public class DataHistorian {
 
         PCollection pc = rp
         // Add KafkaIO#read and provide configurations.
-        .apply(KafkaIO.<String, String>read()
+        .apply("ConsumeFromMessageHub", KafkaIO.<String, String>read()
                 .withBootstrapServers(config.getBootstrapServers())
                 .withTopic(options.getTopic())
                 .updateConsumerProperties(config)
@@ -92,39 +60,40 @@ public class DataHistorian {
                 // This example does not need meta data
                 .withoutMetadata()
         )
-        // Drop the dummy key "beam"
+        // Drop the dummy key "beam", turning ["beam", [record]] into: [record]
         .apply(Values.create())
 
-        // Parse JSON
-        .apply(ParseJsons.of(DHMessageRecord.class))
+        .apply("ParseJSON", ParseJsons.of(DHMessageRecord.class))
         .setCoder(SerializableCoder.of(DHMessageRecord.class))
 
-        // First windowing
-        .apply(Window.into(FixedWindows.of(Duration.millis(1000))))
+        .apply("WindowOneSecond", Window.into(FixedWindows.of(Duration.millis(1000))))
 
-        // TODO: transforms: mean, stddev, min, max
+        .apply("CombineEvents", Combine.globally(new Aggregation1()).withoutDefaults())
 
-        // Second windowing
-        .apply(Window.into(FixedWindows.of(Duration.millis(10000))))
-
-        // TODO: transforms: mean, stddev, min, max
-
-        // Serialize to JSON, in preparation for output to sink(s)
-        .apply(AsJsons.of(DHMessageRecord.class));
+        .apply("SerializeAsJSON", AsJsons.of(AggregatedRecord.class));
 
         // Print messages to System.out, for debugging
-        pc.apply(ParDo.of(new PrintDoFn()));
+        pc.apply("PrintToStdoutForDebug", ParDo.of(new PrintDoFn()));
 
         // Print to temp files, for debugging
-        pc.apply(new WriteOneFilePerWindow("/tmp/out", 1));
+        pc.apply("WriteToTempFileForDebug",
+                new WriteOneFilePerWindow("/tmp/out", 1));
 
         // Production output to COS
-        pc.apply(new WriteOneFilePerWindow("s3://" + bucket + "/" + filePrefix, 1));
+        pc.apply("WriteToCloudObjectStore",
+                new WriteOneFilePerWindow("s3://" + bucket + "/" + filePrefix, 1));
 
         // Launch the pipeline and block.
         rp.run();
-
-        return;
     }
 
+    /**
+     * A simple DoFn that prints message to System.out
+     */
+    private static class PrintDoFn extends DoFn<String, Void> {
+        @ProcessElement
+        public void processElement(ProcessContext c) {
+            System.out.println(c.element());
+        }
+    }
 }
