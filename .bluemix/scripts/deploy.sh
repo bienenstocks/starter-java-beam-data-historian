@@ -48,7 +48,7 @@ if [ $COS_INSTANCE ]; then
         }" >> vcap.json
 fi
 
-if [[ ! -z "$MH_KEY" ]] ; then
+if [ $MH_INSTANCE ] ; then
     # get MH credentials
     bx resource service-key-delete "MH_${APP_NAME}" -f
     MH_KEY=$(bx resource service-key-create "MH_${APP_NAME}" Manager --instance-name "${MH_INSTANCE}")
