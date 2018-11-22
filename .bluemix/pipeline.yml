@@ -51,7 +51,6 @@ stages:
       space: ${PROD_SPACE_NAME}
       application: ${APP_NAME}
     script: |
-      #!/bin/bash 
-      chmod u+x deploy.sh
-      ./deploy.sh
+      #!/bin/bash
+      echo $PIPELINE_API_KEY
     docker_image: maven:3.5.3-ibmjava
