@@ -50,8 +50,9 @@ fi
 
 if [ $MH_INSTANCE ] ; then
     # get MH credentials
-    bx resource service-key-delete "MH_${APP_NAME}" -f
-    MH_KEY=$(bx resource service-key-create "MH_${APP_NAME}" Manager --instance-name "${MH_INSTANCE}")
+    bx service key-delete ${MH_INSTANCE} "MH_${APP_NAME}
+    bx service key-create ${MH_INSTANCE} "MH_${APP_NAME}
+    MH_KEY=$(bx service key-show ${MH_INSTANCE} "MH_${APP_NAME})
     echo ",
         \"messagehub\": {
             \"user\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="user: "} {print $2}' | awk '{ print $1 }')\",
