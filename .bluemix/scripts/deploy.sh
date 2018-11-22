@@ -33,7 +33,7 @@
          COSCRN=$(echo ${COS} | awk 'BEGIN{FS=“crn: "} {print $2}' | awk '{ print $1 }')
          bx cos config —crn $COSCRN
         bx cos create-bucket --bucket ${APP_NAME} --region us-geo
- i      if [ $COS_KEY ]; then
+        if [ $COS_KEY ]; then
          echo ",
            \"cos\": {
              \"endpoint\": \"s3-api.us-geo.objectstorage.softlayer.net\",
@@ -49,7 +49,7 @@
         # get MH credentials
         bx resource service-key-delete "MH_${APP_NAME}" -f
         MH_KEY=$(bx resource service-key-create "MH_${APP_NAME}" Manager --instance-name "${MH_INSTANCE}")
-if      if [ $MH_KEY ]; then
+        if [ $MH_KEY ]; then
             echo ",
               \"messagehub\": {
                  \"user\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="user: "} {print $2}' | awk '{ print $1 }')\",
