@@ -52,5 +52,6 @@ stages:
       application: ${APP_NAME}
     script: |
       #!/bin/bash
-      echo $PIPELINE_API_KEY
+      chmod u+x deploy.sh
+      ./deploy.sh
     docker_image: maven:3.5.3-ibmjava

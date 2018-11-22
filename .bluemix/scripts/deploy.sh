@@ -33,28 +33,30 @@
          COSCRN=$(echo ${COS} | awk 'BEGIN{FS=“crn: "} {print $2}' | awk '{ print $1 }')
          bx cos config —crn $COSCRN
         bx cos create-bucket --bucket ${APP_NAME} --region us-geo
-
-        echo ",
-         \"cos\": {
-            \"endpoint\": \"s3-api.us-geo.objectstorage.softlayer.net\",
-            \"accessKeyId\": \"$(echo ${COS_KEY} | awk 'BEGIN{FS="access_key_id: "} {print $2}' | awk '{ print $1 }')\",
-            \"secretKey\": \"$(echo ${COS_KEY} | awk 'BEGIN{FS="secret_access_key: "} {print $2}' | awk '{ print $1 }')\",
-            \"bucket\": ${APP_NAME},
-            \"filePrefix\": \"prefix\"
-         }" >> vcap.json
+ i      if [ $COS_KEY ]; then
+         echo ",
+           \"cos\": {
+             \"endpoint\": \"s3-api.us-geo.objectstorage.softlayer.net\",
+              \"accessKeyId\": \"$(echo ${COS_KEY} | awk 'BEGIN{FS="access_key_id: "} {print $2}' | awk '{ print $1 }')\",
+                \"secretKey\": \"$(echo ${COS_KEY} | awk 'BEGIN{FS="secret_access_key: "} {print $2}' | awk '{ print $1 }')\",
+                \"bucket\": \"${APP_NAME}\",
+                \"filePrefix\": \"prefix\"
+              }" >> vcap.json
+         fi
       fi
 
       if [ $MH_INSTANCE ]; then
         # get MH credentials
         bx resource service-key-delete "MH_${APP_NAME}" -f
         MH_KEY=$(bx resource service-key-create "MH_${APP_NAME}" Manager --instance-name "${MH_INSTANCE}")
-
-        echo ",
-          \"messagehub\": {
-            \"user\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="user: "} {print $2}' | awk '{ print $1 }')\",
-            \"password\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="password: "} {print $2}' | awk '{ print $1 }')\",
-            \"kafka_brokers_sasl\": \"$(echo ${COS_KEY} | awk 'BEGIN{FS="kafka_brokers_sasl: "} {print $2}' | awk '{ print $1 }')\"
-          }" >>vcap.json
+if      if [ $MH_KEY ]; then
+            echo ",
+              \"messagehub\": {
+                 \"user\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="user: "} {print $2}' | awk '{ print $1 }')\",
+                 \"password\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="password: "} {print $2}' | awk '{ print $1 }')\",
+                 \"kafka_brokers_sasl\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="kafka_brokers_sasl: "} {print $2}' | awk '{ print $1 }')\"
+             }" >>vcap.json
+          fi
       fi
 
       echo "}" >> vcap.json
