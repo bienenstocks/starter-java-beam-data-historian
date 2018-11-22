@@ -20,12 +20,12 @@
       "pattern": "\\S"
     },
     "mh-instance-name": {
-      "description": "Message Hub Service Instance name from IBM Cloud.",
+      "description": "Event Streams Service Instance name from IBM Cloud.",
       "type": "string",
       "quoted": true
     },
     "cos-instance-name": {
-      "description": "TCloud Object Storage Service Instance name from IBM Cloud.",
+      "description": "Cloud Object Storage Service Instance name from IBM Cloud.",
       "type": "string"
     },
     "prod-region": {
@@ -79,7 +79,7 @@
     {
       "type": "text",
       "readonly": false,
-      "title": "Message Hub Service Instance Name",
+      "title": "Event Streams Service Instance Name",
       "key": "mh-instance-name"
     },
     {
