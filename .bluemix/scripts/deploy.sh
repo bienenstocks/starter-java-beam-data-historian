@@ -33,7 +33,7 @@
          COSCRN=$(echo ${COS} | awk 'BEGIN{FS=“crn: "} {print $2}' | awk '{ print $1 }')
          bx cos config —crn $COSCRN
         bx cos create-bucket --bucket ${APP_NAME} --region us-geo
-        if [ $COS_KEY ]; then
+        if [[ ! -z "$COS_KEY" ]] ; then
          echo ",
            \"cos\": {
              \"endpoint\": \"s3-api.us-geo.objectstorage.softlayer.net\",
@@ -45,7 +45,7 @@
          fi
       fi
 
-      if [ $MH_INSTANCE ]; then
+      if [[ ! -z "$MH_KEY" ]] ; then
         # get MH credentials
         bx resource service-key-delete "MH_${APP_NAME}" -f
         MH_KEY=$(bx resource service-key-create "MH_${APP_NAME}" Manager --instance-name "${MH_INSTANCE}")
@@ -56,7 +56,7 @@
                  \"password\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="password: "} {print $2}' | awk '{ print $1 }')\",
                  \"kafka_brokers_sasl\": \"$(echo ${MH_KEY} | awk 'BEGIN{FS="kafka_brokers_sasl: "} {print $2}' | awk '{ print $1 }')\"
              }" >>vcap.json
-          fi
+        fi
       fi
 
       echo "}" >> vcap.json
