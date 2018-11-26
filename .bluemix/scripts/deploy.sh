@@ -64,7 +64,7 @@ if [ $MH_INSTANCE ] ; then
           \"messagehub\": {
             \"user\": \"$(cat mh_key_out.json | jq -r '.resources[] | .entity.credentials.user')\",
             \"password\": \"$(cat mh_key_out.json | jq -r '.resources[] | .entity.credentials.password')\",
-            \"kafka_brokers_sasl\": \"[\"${brokersstrip}\"]\"
+            \"kafka_brokers_sasl\": [\"${brokersstrip}\"]
           }" >> vcap.json
 fi
 
