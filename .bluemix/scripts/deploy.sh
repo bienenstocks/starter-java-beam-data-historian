@@ -49,21 +49,22 @@ if [ $COS_INSTANCE ]; then
 fi
 
 if [ $MH_INSTANCE ] ; then
-    bx cf curl /v2/service_instances?q=name:${MH_INSTANCE} --output mh_inst_out.json
+    bx cf curl /v2/service_instances?q=name:"${MH_INSTANCE}" --output mh_inst_out.json
     MH_GUID=$(cat mh_inst_out.json | jq -r '.resources[] | .metadata.guid')
-    echo "guid $MH_GUID"
-    bx cf curl /v2/service_keys?q=name:\"MH_${APP_NAME}\" --output mh_key_out.json
-    cat mh_key_out.json
+    bx cf curl /v2/service_keys?q=name:"MH_${APP_NAME}" --output mh_key_out.json
+
     if [[ "$(cat mh_key_out.json | jq -r '.total_results')" -eq 0 ]]; then
-        echo "create service key"
-        bx cf curl /v2/service_keys -d "{\"service_instance_guid\":\"${MH_GUID}\",\"name\":\"MH_${APP_NAME}\"}" --output mh_key_out.json
+        bx cf curl /v2/service_keys -d "{\"service_instance_guid\":\"${MH_GUID}\",\"name\":\"MH_${APP_NAME}\"}"
+        bx cf curl /v2/service_keys?q=name:"MH_${APP_NAME}" --output mh_key_out.json
     fi
     cat mh_key_out.json
+    brokers=$(cat mh_key_out.json | jq -r '.resources[] | .entity.credentials.kafka_brokers_sasl')
+    brokersstrip=$(echo $brokers | tr -d '"' | tr -d '[' | tr -d ']')
     echo ",
           \"messagehub\": {
-            \"user\": \"$(cat mh_key_out.json | jq -r '.entity.credentials.user')\",
-            \"password\": \"$(cat mh_key_out.json | jq -r '.entity.credentials.password')\",
-            \"kafka_brokers_sasl\": \"$(cat mh_key_out.json | jq -r '.entity.credentials.kafka_brokers_sasl')\"
+            \"user\": \"$(cat mh_key_out.json | jq -r '.resources[] | .entity.credentials.user')\",
+            \"password\": \"$(cat mh_key_out.json | jq -r '.resources[] | .entity.credentials.password')\",
+            \"kafka_brokers_sasl\": \"[\"${brokersstrip}\"]\"
           }" >> vcap.json
 fi
 
