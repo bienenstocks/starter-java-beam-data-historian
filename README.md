@@ -26,7 +26,7 @@ Need to provision the following in IBM Cloud:
 - Editor permissions on a Toolchain Service in IBM Cloud
 
 ### To get started, click **Deploy to IBM Cloud**.
-<a href="https://bluemix.net/deploy?repository=https://github.com/bienenstocks/starter-java-beam-data-historian" target="_blank">[![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)]</a>
+<a href="https://bluemix.net/deploy?repository=https://github.com/bienenstocks/starter-java-beam-data-historian" target="_blank">![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)</a>
 
 This will open up the toolchain create page. Follow the instructions for selecting the
 toolchain name, region, Git repo, and then click 'Create'.
