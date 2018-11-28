@@ -16,7 +16,7 @@ The aggregated tuple data will then flow to a cloud object storage instance to b
 
 ![](./media/DH_flow.png)
 
-### Prereqs
+## Prereqs
 * Create an <a href="https://console.bluemix.net/dashboard/apps" target="_blank">IBM Cloud account</a> if you don't already have one.
 * Need to provision the following in IBM Cloud:
   * Streaming Analytics Instance
@@ -25,7 +25,7 @@ The aggregated tuple data will then flow to a cloud object storage instance to b
   * Must have Editor permissions on a Toolchain Service in IBM Cloud
 * Be sure to [populate Event Streams ](#populateES) with a topic and Data Historian data before running the application.
 
-### To get started, click **Deploy to IBM Cloud**.
+## To get started, click **Deploy to IBM Cloud**.
 
 <a href="https://bluemix.net/deploy?repository=https://github.com/bienenstocks/starter-java-beam-data-historian" target="_blank">![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)</a>
 
@@ -63,7 +63,7 @@ and can follow the steps to [monitor](#monitor) the flow.
 IF the deploy flow stage fails, click on "view logs and history" to find the failure.
 To debug, the deploy script can by found in the git repo under .bluemix/scripts.
 
-### Populating Event Streams topic with Data Historian data<a name="populateES"></a>
+## Populating Event Streams topic with Data Historian data<a name="populateES"></a>
 The application that is running will subscribe to a specific topic in your Event Streams Instance to ingest the Data
 Historian data. This application provides an Event Streams Producer that can be run to create and
 populate this topic in Event Streams.
@@ -76,7 +76,7 @@ $ git clone https://github.com/IBM/starter-java-beam-data-historian.git
 
 ##### 2. run the producer script
 
-### Deploying locally
+## Deploying locally
 Alternatively to deploying the application to cloud, the application can be run locally once it's been cloned.
 
 ##### 1. clone this repo:
@@ -95,7 +95,7 @@ listed credentials.
 
 $ ./run_remote.sh
 
-### Monitoring your application<a name="monitor"></a>
+## Monitoring your application<a name="monitor"></a>
 Once the application has been successfully deployed, either by running locally or by deploying to cloud,
 go to the Streaming Analytics instance that you are using to run the flow and click "LAUNCH".
 This will open the Streaming Analytics console. From the console, you can view and monitor the running flow.
