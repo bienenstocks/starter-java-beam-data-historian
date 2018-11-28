@@ -10,5 +10,12 @@
     "secretKey": "<secret_access_key>",
     "bucket": "<bucket>",
     "filePrefix": "default"
-  }
+  },
+  "streaming-analytics":[{
+      "name” : “streaming-analytics",
+      "credentials" : {
+        "apikey": "",
+        "v2_rest_url": ""
+      }
+  }]
 }
