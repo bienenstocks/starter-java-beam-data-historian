@@ -10,8 +10,8 @@ if ! [ -x "$(command -v bx)" ]; then
     curl -fsSL https://clis.ng.bluemix.net/install/linux | sh
 fi
 
-# TODO : how do you know which env to use ? and remove cf
-bx login --apikey $PIPELINE_API_KEY -a https://api.ng.bluemix.net
+API_ENV=${echo ${PIPELINE_API_URL} | sed -e 's/.*devops-\(.*\)\/.*\/.*/\1/')
+bx login --apikey $PIPELINE_API_KEY -a $API_ENV
 bx target --cf
 
 # get Streaming analytics credentials
