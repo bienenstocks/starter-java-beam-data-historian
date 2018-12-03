@@ -82,7 +82,14 @@ To get the service credentials for a service, go to the service instance in IBM 
 On the left panel click on **service credentials**. Click **view credentials** from one of the
 listed credentials.
 
-##### 3. Run the producer script
+##### 3. Create topic "DataHistorian" in Event Streams Instance
+
+In the Event Streams Instance in IBM Cloud, click on **manage**.
+
+Add new topic **DataHistorian** if it does not already exist.
+
+
+##### 4. Run the producer script
 
 In the root dir of the repo, run:
 
