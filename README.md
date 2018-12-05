@@ -122,3 +122,11 @@ $ ./run_remote.sh
 Once the application has been successfully deployed, either by running locally or by deploying to cloud,
 go to the Streaming Analytics instance that you are using to run the flow and click **LAUNCH**.
 This will open the Streaming Analytics console. From the console, you can view and monitor the running flow.
+
+
+## Troubleshooting
+
+1. If the deploy script fails when deploying to cloud, click on **view logs and history** to see the errors.
+IF the script needs to be modified, it can be edited directly in the git repo.
+Click on the Git repo from the toolchain view. Drill down into .bluemix/scripts, and open the deploy.sh script.
+Any changes made here will be picked up next time you click on **Delivery Pipeline**.
