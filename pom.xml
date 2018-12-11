@@ -33,7 +33,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the ~ License for the spe
     </repository>
     <repository>
       <id>labs</id>
-      <url>https://git.ng.bluemix.net/ilanp/strmsbmrnr/raw/master/</url>
+      <url>https://github.com/johnmac-ibm/streamsx.beam/tree/mvn-release/</url>
     </repository>
   </repositories>
 
