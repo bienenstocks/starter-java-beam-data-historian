@@ -36,6 +36,16 @@ stages:
     value: {{this.serviceInfo.name}}
     type: text
  {{/with}}
+ {{#with config.creds.messageHub}}
+   - name: MH_INSTANCE
+     value: {{this.serviceInfo.name}}
+     type: text
+  {{/with}}
+  {{#with config.creds.cloudObjectStorage}}
+    - name: COS_INSTANCE
+      value: {{this.serviceInfo.name}}
+      type: text
+   {{/with}}
   jobs:
   - name: Deploy flow
     type: deployer
